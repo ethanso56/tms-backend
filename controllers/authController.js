@@ -24,8 +24,8 @@ const login = async (req, res) => {
         // create jwt
         const accessToken = jwt.sign(
             { username: data[0][0].username }, 
-            process.env.ACCESS_TOKEN_SECRET
-        //    { expiresIn: '1d' }
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '1d' }
         );
     
         // const refreshToken = jwt.sign(
@@ -39,7 +39,7 @@ const login = async (req, res) => {
         res
           .cookie("jwt", accessToken, {
             httpOnly: true
-        //    maxAge: 24 * 60 * 60 * 1000
+          //  maxAge: 24 * 60 * 60 * 1000
           })
           .status(200)
           .json({ accessToken, others });

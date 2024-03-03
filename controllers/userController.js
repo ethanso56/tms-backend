@@ -1,5 +1,6 @@
 const db = require('../config/connectDB')
 const bcrypt = require('bcrypt')
+const { CheckGroup } = require('../utils/utils')
 
 const editUser = async (req, res) => {
     const q = "UPDATE accounts SET `password`=?, `email`=? WHERE username=?"
@@ -39,6 +40,20 @@ const editUser = async (req, res) => {
     }
 }
 
+// const checkUserGroup = (req, res) => {
+//     try {
+//         if (CheckGroup(req.body.username, req.body.group)) {
+//             return res.status(200)
+//         } else {
+//             return res.status
+//         }
+//     } catch (error) {
+        
+//     }
+   
+// }
+
 module.exports = {
-    editUser
+    editUser,
+    checkUserGroup
 }

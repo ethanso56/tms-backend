@@ -32,7 +32,7 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 app.use('/', require('./routes/root'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/admin', require('./routes/adminRoutes'))
-app.use('/user', require('./routes/adminRoutes'))
+app.use('/user', require('./routes/userRoutes'))
 
 app.all('*', (req, res) => {
     res.status(404)
