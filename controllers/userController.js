@@ -40,20 +40,6 @@ const editUser = async (req, res) => {
     }
 }
 
-// const checkUserGroup = (req, res) => {
-//     try {
-//         if (CheckGroup(req.body.username, req.body.group)) {
-//             return res.status(200)
-//         } else {
-//             return res.status
-//         }
-//     } catch (error) {
-        
-//     }
-   
-// }
-
 module.exports = {
     editUser,
-    checkUserGroup
 }

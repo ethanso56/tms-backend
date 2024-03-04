@@ -7,10 +7,10 @@ const Checkgroup = async (userid, groupname) => {
     try {
         const data = await db.query(q);
         if (data[0][0].groups.split(",").includes(groupname.toLowerCase())) {
-            console.log("true")
+            console.log("checkgroup true")
             return true
         } else {
-            console.log("false")
+            console.log("checkgroup false")
             return false
         }
     } catch (error) {

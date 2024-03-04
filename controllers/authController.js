@@ -1,6 +1,7 @@
 const { db } = require('../config/connectDB')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const CheckGroup = require('../utils/utils')
 require('dotenv').config()
 
 const login = async (req, res) => {
@@ -35,14 +36,17 @@ const login = async (req, res) => {
         // );
     
         const { password, ...others } = data[0][0];
-    
+
+        const isAdmin = await CheckGroup(data[0][0].username, "admin")
+        
         res
-          .cookie("jwt", accessToken, {
-            httpOnly: true
+          .cookie("accessToken", accessToken, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 1 * 3_600_000)
           //  maxAge: 24 * 60 * 60 * 1000
           })
           .status(200)
-          .json({ accessToken, others });
+          .json({ accessToken, others, isAdmin });
       
     } catch (err) {
         console.log(err)
