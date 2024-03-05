@@ -14,6 +14,11 @@ const login = async (req, res) => {
 
         if (data[0].length === 0) return res.status(404).json("User not found!");
 
+        // User is disabled
+        if (!data[0][0].status) {
+            return res.status(401).json("User has been disabled")
+        }
+
         const checkPassword = bcrypt.compareSync(
             req.body.password,
             data[0][0].password

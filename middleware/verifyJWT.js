@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { db } = require('../config/connectDB')
 require('dotenv').config()
 
 const verifyJWT = (req, res, next) => {
@@ -12,32 +13,28 @@ const verifyJWT = (req, res, next) => {
     jwt.verify(
         accessToken,
         process.env.ACCESS_TOKEN_SECRET,
-        (err, decoded) => {
+        async (err, decoded) => {
             if (err) return res.status(403).json({ message: 'Forbidden at verify jwt' })
             req.username = decoded.username
+            
+            // check status of user
+            const q = 'SELECT `status` FROM `accounts` WHERE `username`=?'
+
+            try {
+                const isEnabled = await db.query(q, [req.username])
+                if (!isEnabled) {
+                    return res.status(403).json({ message: 'Forbidden at verify jwt' }) 
+                }
+                
+            } catch (error) {
+                console.log(error)
+                return res.status(500).json(error)
+            }
+
             next()
         }
     )
+
 }
-
-// const verifyJWT = (req, res, next) => {
-//     const authHeader = req.headers.authorization || req.headers.Authorization
-
-//     if (!authHeader?.startsWith('Bearer ')) {
-//         return res.status(401).json({ message: 'Unauthorized at verify jwt' })
-//     }
-
-//     const token = authHeader.split(' ')[1]
-
-//     jwt.verify(
-//         token,
-//         process.env.ACCESS_TOKEN_SECRET,
-//         (err, decoded) => {
-//             if (err) return res.status(403).json({ message: 'Forbidden at verify jwt' })
-//             req.username = decoded.username
-//             next()
-//         }
-//     )
-// }
 
 module.exports = verifyJWT 
