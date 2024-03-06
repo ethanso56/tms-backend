@@ -62,7 +62,7 @@ const createGroup = async (req, res) => {
 
     try {
         const selection = await db.query(selectQ, [req.body.groupname])
-        if (selection[0].length) return res.status(409).json("Group already exists")
+        if (selection[0].length) return res.status(400).json("Group already exists")
 
         if (req.body.groupname.length > 50) {
             return res.status(409).json("Groupname cannot be more than 50 characters.")

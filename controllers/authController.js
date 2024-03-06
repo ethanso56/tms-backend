@@ -91,6 +91,83 @@ const logout = (req, res) => {
     }).status(200).json("User has been logged out.")
 }
 
+const verifyUserLoggedIn = (req, res) => {
+
+    console.log("inside")
+
+    let isLoggedIn = false
+    let isAdmin = false
+    let username = ''
+
+    const accessToken = req.cookies.accessToken
+
+    if (!accessToken) {
+        res.status(200)
+        .json({ isLoggedIn, isAdmin, username })
+        //res.status(401).json({ message: 'No access token at verify user logged in' })
+    } else {
+        jwt.verify(
+            accessToken,
+            process.env.ACCESS_TOKEN_SECRET,
+            async (err, decoded) => {
+                if (err) {
+                  //  res.status(403).json({ message: 'Forbidden at verify jwt' })
+                  res.status(200)
+                  .json({ isLoggedIn, isAdmin, username })
+                } else {
+                    req.username = decoded.username
+                
+                    // check status of user
+                    const q = 'SELECT `status` FROM `accounts` WHERE `username`=?'
+        
+                    try {
+                        const [data] = await db.query(q, [req.username])
+                        console.log("is enabled: " + data[0].status)
+                        const isEnabled = data[0].status
+                        if (isEnabled === 0) {
+                            console.log('Forbidden at verify jwt 2')
+                            res.status(200)
+                            .json({ isLoggedIn, isAdmin, username })
+                         //   res.status(401).json({ message: 'Forbidden at verify jwt 2' }) 
+                        } else {
+                            console.log("test 2")
+                            isLoggedIn = true
+                            username = decoded.username
+                        }
+                        
+                    } catch (error) {
+                        console.log(error)
+                     //   res.status(500).json(error)
+                    }
+                
+                    if (await CheckGroup(req.username, "admin")) {
+                        console.log("is admin")
+                        console.log("test 3")
+
+                        isAdmin = true
+
+                        res.status(200)
+                        .json({ isLoggedIn, isAdmin, username })
+                    } else {
+                        console.log("is not admin")
+                    //    res.status(401).json({ message: 'Unauthorized page. Only for admin.' })
+
+                        res.status(200)
+                        .json({ isLoggedIn, isAdmin, username })
+                    }
+                }
+                
+            }
+        )
+    }
+
+    // console.log("logged in: " + isLoggedIn)
+    // console.log("admin: " + isAdmin)
+
+//     res.status(200)
+//     .json({ isLoggedIn, isAdmin })
+}
+
 // @desc Refresh
 // @route GET /auth/refresh
 // @access Public - because access token has expired
@@ -133,6 +210,7 @@ const logout = (req, res) => {
 
 module.exports = {
     login,
-    logout
+    logout,
+    verifyUserLoggedIn
    // refresh
 }
