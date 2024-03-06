@@ -22,11 +22,11 @@ const createUser = async (req, res) => {
         const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
 
         if (req.body.password.length < 8 || req.body.password.length > 10) {
-            return res.status(409).json("Password must be between 8 to 10 characters.")
+            return res.status(400).json("Password must be between 8 to 10 characters.")
         }
 
         if (!alphabetRegex.test(req.body.password) || !numberRegex.test(req.body.password) || !specialCharRegex.test(req.body.password)) {
-            return res.status(409).json("Password must contain at least one alphabet, number and special character.")
+            return res.status(400).json("Password must contain at least one alphabet, number and special character.")
         }
 
         if (req.body.email.length > 255) {

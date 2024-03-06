@@ -30,6 +30,7 @@ const editUser = async (req, res) => {
         }
     } else {
         // update both
+        console.log("update both")
 
         const q = "UPDATE accounts SET `password`=?, `email`=? WHERE username=?"
 

@@ -21,9 +21,12 @@ const verifyJWT = (req, res, next) => {
             const q = 'SELECT `status` FROM `accounts` WHERE `username`=?'
 
             try {
-                const isEnabled = await db.query(q, [req.username])
-                if (!isEnabled) {
-                    return res.status(403).json({ message: 'Forbidden at verify jwt' }) 
+                const [data] = await db.query(q, [req.username])
+                console.log("is enabled: " + data[0].status)
+                const isEnabled = data[0].status
+                if (isEnabled === 0) {
+                    console.log('Forbidden at verify jwt 2')
+                    return res.status(401).json({ message: 'Forbidden at verify jwt 2' }) 
                 }
                 
             } catch (error) {
